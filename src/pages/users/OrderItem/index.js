@@ -8,7 +8,7 @@ import {
   Col,
   InputNumber,
 } from 'antd'
-import AddNew from 'components/CustomComponents/AddNew'
+import AddNew from 'components/AddNew'
 import Dynamic from './orderField'
 
 const FormIndex = (props) => {

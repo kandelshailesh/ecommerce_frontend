@@ -1,15 +1,11 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react'
 import { Button, Form, Select, Radio, Input, InputNumber } from 'antd'
-import useFetching from 'hooks/useFetching'
 const widthStyle = { width: 300 }
 
 const OrderItem = ({ values, setValues, index, i, errors, products }) => {
   console.log('cvalues', values.order_item, products,index,errors)
-  // const [{ response: products }] = useFetching(`/api/backend/v1/products`)
-  // console.log('Categories Response', products)
-  // const [Products, setProducts] = useState(products)
-  // const [ProductFinal, setProductFinal] = useState([])
+ 
   useEffect(()=>{
     let newArray=[]
     if(values?.order_item?.length>0){

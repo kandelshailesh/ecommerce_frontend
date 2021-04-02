@@ -89,7 +89,7 @@ export function* GET_MENU_DATA(role) {
   } 
   // else {
   //   console.log('inside')
-  //   menuLeftData = yield call(getLeftMenuDataSeller)
+  //   menuLeftData = yield call(getLeftMenuDataUser)
   // }
 
   const menuTopData = yield call(getTopMenuData)

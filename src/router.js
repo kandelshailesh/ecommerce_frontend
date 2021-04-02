@@ -145,6 +145,27 @@ const routes = [
     exact: true,
     // authorize:true
   },
+
+   // // subscriber
+   {
+    path: '/subscriber',
+    component: loadable(() => import('pages/users/list')),
+    exact: true,
+    // authorize:true
+  },
+  {
+    path: '/subscriber/add-edit',
+    component: loadable(() => import('pages/users/add-edit')),
+    exact: true,
+    // authorize:true
+  },
+
+  {
+    path: '/subscriber/add-edit/:id',
+    component: loadable(() => import('pages/users/add-edit')),
+    exact: true,
+    // authorize:true
+  },
 ]
 
 @connect(({ user }) => ({ user }))

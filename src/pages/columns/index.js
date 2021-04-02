@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useReducer } from 'react'
 import moment from 'moment'
-const dateFormat='DD/MM/YYYY'
+const dateFormat='DD-MM-YYYY'
 export const categoryColumns = [
   {
     title: 'Name',
@@ -183,7 +183,33 @@ export const doctorColumns = [
         render: (text, record) => (text !== null ? <span>{moment(text).format(dateFormat)}</span> : <span>-</span>),
       },
     
+  ]
 
+  export const SubscribtionColumns = [
+    {
+      title: 'User Name',
+      dataIndex: 'username',
+      key: 'username',
+      width: 100,
+      // search: true,
+      render: (text, record) => (record?.user !== null ? <span>{record?.user?.fullName ||record?.user?.username ||record?.user?.email }</span> : <span>-</span>),
+    },
+    {
+      title: 'Product Name',
+      dataIndex: 'product',
+      key: 'product',
+      width: 100,
+      // search: true,
+      render: (text, record) => (record?.product !== null ? <span>{record?.product?.name }</span> : <span>-</span>),
+    },
+    {
+      title: 'Subscribed Date',
+      dataIndex: 'subscribed_date',
+      key: 'subscribed_date',
+      width: 100,
+      // search: true,
+      render: (text, record) => (text !== null ? <span>{moment(text).format(dateFormat)}</span> : <span>-</span>),
+    },
   ]
 
 export const createColumns = (param) => {

@@ -32,6 +32,7 @@ import moment from 'moment'
 const dateFormat = 'l'
 import OrdersItem from '../OrderItem'
 
+const widthStyle={ width: '100%' }
 const FormA = ({ data, path, categories, units, users, products }) => {
   console.log('path', path, path?.url.slice(0, -2), units)
   const { url } = path
@@ -419,7 +420,6 @@ const FormA = ({ data, path, categories, units, users, products }) => {
     {
       type: (
         <Radio.Group name="discountable" defaultValue={values.discountable} buttonStyle="solid">
-          {/* eslint-disable-next-line react/jsx-boolean-value */}
           <Radio.Button checked={values.discountable === true} value={true}>
             Yes
           </Radio.Button>
@@ -539,17 +539,25 @@ const FormA = ({ data, path, categories, units, users, products }) => {
     },
   ]
 
+  const subscribtionStatus= [
+    {
+      key: 'active',
+      title: 'Active',
+    },
+    {
+      key: 'cancelled',
+      title: 'Cancelled',
+    },
+  ]
+
   const orderFields = [
     {
       type: (
         <Select
           mode="default"
-          // showSearch
           value={values.user_id}
           placeholder="Select Users"
-          // notFoundContent={isFetchingProds ? <Spin size="small" /> : null}
           filterOption={false}
-          // onSearch={fetchProducts}
           onChange={(e) => {
             console.log('val', e)
             setValues((a) => ({
@@ -558,7 +566,6 @@ const FormA = ({ data, path, categories, units, users, products }) => {
             }))
           }}
           style={{ width: '100%' }}
-          // onPopupScroll={this.handlePopupScroll}
         >
           {users?.map((d) => (
             <Select.Option key={d.id} value={d.id}>
@@ -570,27 +577,22 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       key: 'user_id',
       label: 'User',
       error: errors.user_id,
-      // dependency: 'prescriptionNeeded',
     },
     {
       type: (
         <Select
           mode="default"
-          // showSearch
           value={values.status}
           placeholder="Select Status"
-          // notFoundContent={isFetchingProds ? <Spin size="small" /> : null}
           filterOption={false}
-          // onSearch={fetchProducts}
           onChange={(e) => {
-            console.log('val', e)
             setValues((a) => ({
               ...a,
               status: e,
             }))
           }}
           style={{ width: '100%' }}
-          // onPopupScroll={this.handlePopupScroll}
+ 
         >
           {orderStatus?.map((d) => (
             <Select.Option key={d.key} value={d.key}>
@@ -765,12 +767,112 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       error: errors.comment,
     },
   ]
-
-  if (checkpath === 'category') {
+const subscriberFields=[
+  {
+    type: (
+      <Radio.Group name="status" buttonStyle="solid">
+        {subscribtionStatus?.map((d) => (
+          <Radio.Button checked={values.status === d.key} value={d.key}>
+           {d.title}
+          </Radio.Button>
+                  ))}
+        </Radio.Group>
+    ),
+    key: 'status',
+    label: 'Status',
+    error: errors.status,
+  },
+  {
+      type: (
+       <Select
+          name="product_id"
+          value={values.product_id}
+          // showSearch
+          style={widthStyle}
+          placeholder="Select Product"
+          // optionFilterProp="children"
+          onChange={(e) => {
+ 
+            setValues((a) => ({
+              ...a,
+              product_id: e,
+            }))
+          }}
+          filterOption={(input, option) =>
+            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+        >
+         {products?.map((d) => (
+            <Select.Option key={d.id} value={d.id}>
+              {d?.name}
+            </Select.Option>
+          ))}
+        </Select>
+      
+      ),
+      key: 'product_id',
+      label: 'Product',
+      error: errors.product_id
+    },
+    {
+      type: (
+        <InputNumber
+          name="quantity"
+          value={values.quantity}
+          type="number"
+          onChange={(e) => {
+            setValues((a) => ({
+              ...a,
+              quantity: e,
+            }))
+ 
+          }}
+          min={1}
+        />
+      ),
+      key: 'quantity',
+      label: 'Quantity',
+      error: errors.quantity,
+    },
+    {
+      type: (
+        <DatePicker
+          format={dateFormat}
+          allowClear={false}
+          // showToday
+          value={values?.subscribed_date? moment(values.subscribed_date):''}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, subscribed_date: moment(e).format(dateFormat) }))
+          }}
+        />
+      ),
+      key: 'subscribed_date',
+      label: 'Subscribed Date',
+      error: errors.subscribed_date,
+    }, 
+    {
+      type: (
+        <DatePicker
+          format={dateFormat}
+          allowClear={false}
+          // showToday
+          value={values?.last_send_date?moment(values.last_send_date):''}
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, last_send_date: moment(e).format(dateFormat) }))
+          }}
+        />
+      ),
+      key: 'last_send_date',
+      label: 'Last Send Date',
+      error: errors.last_send_date,
+    },
+ 
+]
+  if (checkpath == 'category') {
     formItems = categoryformItems
-  } else if (checkpath === 'unit') {
+  } else if (checkpath == 'unit') {
     formItems = categoryformItems.filter((item) => item.key === 'name')
-  } else if (checkpath === 'doctors') {
+  } else if (checkpath == 'doctors') {
     const hospitalfied = [
       {
         type: <Input value={values.hospital} name="hospital" />,
@@ -785,7 +887,7 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       ...formItems.filter((item) => item.key === 'phone' || item.key === 'image'),
       ...hospitalfied,
     ]
-  } else if (checkpath === 'products') {
+  } else if (checkpath == 'products') {
     formItems = [
       ...categoryformItems.filter((item) => item.key !== 'status'),
       ...formItems.filter((item) => item.key === 'image'),
@@ -793,6 +895,9 @@ const FormA = ({ data, path, categories, units, users, products }) => {
     ]
   } else if (checkpath === 'orders') {
     formItems = orderFields
+  }
+  else if (checkpath === 'subscriber') {
+    formItems = [...orderFields.filter(item=>item.key=='user_id'),...subscriberFields]
   }
 
   if (success) return <Redirect to={`/${checkpath}`} />

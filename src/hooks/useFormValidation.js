@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { notification } from 'antd'
 import { STRINGS } from '_constants'
-// import useDidMountEffect from './useDidMountEffect'
 
 const useFormValidation = (
   initialState,
@@ -28,14 +27,7 @@ const useFormValidation = (
       callback()
     }
   }, [errors, isSubmitting])
-
-  // useDidMountEffect(() => {
-  //   if (Object.entries(touched).length > 0) validateForm('touched')
-  // }, [values, touched])
-
-  // useDidMountEffect(() => {
-  //   validateForm()
-  // }, [values])
+ 
 
   useEffect(() => {
     // console.log('useEffect isSubmitting', isSubmitting)
@@ -62,14 +54,12 @@ const useFormValidation = (
   const onChange = (event, cb) => {
     // console.log('use form validation on change', event.target.value)
     event.persist()
-    setValues(val => ({ ...val, [event.target.name]: event.target.value }))
+    setValues(val => ({ ...val, [event?.target?.name]: event?.target?.value }))
 
     if (cb) cb()
   }
 
   const validateForm = async notifyMsg => {
-    // console.log('validateForm', notifyMsg)
-    // console.log('values', values)
     console.log('touched', touched)
 
     return (

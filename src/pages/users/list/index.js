@@ -4,7 +4,7 @@ import { Button,Table, Icon, notification,Select, Dropdown, Popconfirm } from 'a
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import Menu from 'components/Menu'
-import AddNew from 'components/CustomComponents/AddNew'
+import AddNew from 'components/AddNew'
 import useFetching from 'hooks/useFetching'
 import isEmpty from 'lodash/isEmpty'
 import callApi from 'utils/callApi'
@@ -12,7 +12,7 @@ import { STRINGS} from '_constants'
 import { connect } from 'react-redux'
 import { Delete  } from 'services'
 import { reducer, initialState } from './reducer'
-import { createColumns ,categoryColumns,userColumns,doctorColumns,productColumns ,orderColumns} from '../../columns'
+import { createColumns ,categoryColumns,userColumns,doctorColumns,productColumns ,orderColumns,SubscribtionColumns} from '../../columns'
 import FilterProvider from 'components/RenderProps/FiltersProvider'
 
 const scrollStyle = { x: '100%' }
@@ -43,6 +43,17 @@ const orderStatus = [
   },
 ]
 
+const subscribtionStatus= [
+  {
+    key: 'active',
+    title: 'Active',
+  },
+  {
+    key: 'cancelled',
+    title: 'Cancelled',
+  },
+]
+
 const Products = (props) => {
   console.log("props",props)
 
@@ -58,12 +69,18 @@ const Products = (props) => {
     `/api/backend/v1${path}`
   )
 useEffect(()=>{
-   if(path==='/orders'){
+   if(path=='/orders'){
     console.log("pathinsde",)  
     dispatch({
       type: 'changeMenuItems',
       payload: orderStatus,
     })
+   }
+   else if(path=='/subscriber'){
+    dispatch({
+      type: 'changeMenuItems',
+      payload: subscribtionStatus,
+    })   
    }
    else{
     console.log("else",)
@@ -259,7 +276,7 @@ useEffect(()=>{
       width:100,
       render: (text, record) => {
         let badge = 'badge-success'
-        if (record.status === 'hold'||record.status === 'CANCELLED') badge = 'badge-danger'
+        if (record.status === 'hold'||record.status === 'CANCELLED' || record.status === 'cancelled') badge = 'badge-danger'
         if (record.status === 'PENDING') badge = 'badge-primary'
         if (record.status === 'SHIPPING') badge = 'badge-warning'
         // if (record.status === 'COMPLETED') badge = 'badge-danger'
@@ -300,30 +317,37 @@ useEffect(()=>{
   let category=[]
   // useEffect(()=>{
     if(path){
-      if(path==='/category'){
+      if(path=='/category'){
         console.log("categoryolumns",categoryColumns)
        columns=[...categoryColumns,...columns]    
     }
-    else if(path==='/users'){ 
+    else if(path=='/users'){ 
       columns=[...userColumns,...columns]
       console.log("usercolumns",userColumns)
           
     }
-    else if(path==='/unit'){ 
+    else if(path=='/unit'){ 
       columns=[...categoryColumns.map(({search,...item})=>item),...columns.filter(item=>item.key!=='status')]
       console.log("usercolumns",userColumns)     
     }
-    else if(path==='/doctors'){ 
+    else if(path=='/doctors'){ 
       columns=[...doctorColumns,...columns]
       console.log("usercolumns",userColumns)     
     }
-    else if(path==='/products'){ 
+    else if(path=='/products'){ 
       columns=[...productColumns,...columns.filter(item=>item.key!=='status')]
       console.log("usercolumns",userColumns)     
     }
-    else if(path==='/orders'){ 
+    else if(path=='/orders'){ 
       // columns=[...productColumns,...columns.filter(item=>item.key!=='status')]
       columns=[...orderColumns,...columns]
+
+      console.log("usercolumns",userColumns)  
+      // menuItems=orderStatus   
+    }
+    else if(path=='/subscriber'){ 
+      // columns=[...productColumns,...columns.filter(item=>item.key!=='status')]
+      columns=[...SubscribtionColumns,...columns]
 
       console.log("usercolumns",userColumns)  
       // menuItems=orderStatus   

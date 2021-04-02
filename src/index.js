@@ -7,8 +7,6 @@ import { routerMiddleware } from 'connected-react-router'
 import { createStore, applyMiddleware, compose } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { createHashHistory } from 'history'
-// import { whyDidYouUpdate } from 'why-did-you-update'
-// import whyDidYouRender from "@welldone-software/why-did-you-render"
 import reducers from 'redux/reducers'
 import sagas from 'redux/sagas'
 import Router from 'router' // from router.js
