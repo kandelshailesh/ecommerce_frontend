@@ -44,9 +44,14 @@ export async function formAdd(path, values) {
     
     // formData.append(`order_item`, JSON.stringify(values.order_item.map(({quantity,price,product_id})=>({product_id,quantity,price}))))
     // })
-
+    if(values?.deleted_item?.length>0 && values.deleted_item?.length!==values.deletedBranches?.length){
+      // var difference = values.deletedBranches.filter(x => values.arrBranches.indexOf(x) === -1);
+      // console.log("difference",difference);
+      values.deleted_item?.map(item=>formData.append('deleted_item',item))
+    }
 
   }
+
   console.log("unrquired",unrequiredFields)
   Object.entries(values).map(([key, value]) => {
     if (!unrequiredFields.includes(key)) formData.append(key, value)

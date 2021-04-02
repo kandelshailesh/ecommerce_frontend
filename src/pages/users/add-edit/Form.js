@@ -1,7 +1,25 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { Form, Input, Button, Radio, Select, InputNumber, notification, Upload, Icon,DatePicker } from 'antd'
-import { unitSchema ,usersSchema,categorySchema,ordersSchema,productsSchema,doctorsSchema } from 'utils/Schema'
+import {
+  Form,
+  Input,
+  Button,
+  Radio,
+  Select,
+  InputNumber,
+  notification,
+  Upload,
+  Icon,
+  DatePicker,
+} from 'antd'
+import {
+  unitSchema,
+  usersSchema,
+  categorySchema,
+  ordersSchema,
+  productsSchema,
+  doctorsSchema,
+} from 'utils/Schema'
 import { formItemLayout, tailFormItemLayout, getBaseName } from 'utils'
 import { withRouter, Redirect } from 'react-router-dom'
 import useFormValidation from 'hooks/useFormValidation'
@@ -11,11 +29,11 @@ import isEmpty from 'lodash/isEmpty'
 import useUpload from 'hooks/useUpload'
 // import {userformItems} from '../../Forms'
 import moment from 'moment'
-const dateFormat='l'
+const dateFormat = 'l'
 import OrdersItem from '../OrderItem'
 
-const FormA = ({ data, path, categories, units,users,products}) => {
-  console.log('path', path, path?.url.slice(0, -2),units)
+const FormA = ({ data, path, categories, units, users, products }) => {
+  console.log('path', path, path?.url.slice(0, -2), units)
   const { url } = path
   useEffect(() => {
     console.log(values, errors)
@@ -23,7 +41,16 @@ const FormA = ({ data, path, categories, units,users,products}) => {
 
   const checkpath = url.includes('/') ? url.slice(0, -2) : url
 
-  const initialValues =checkpath==='orders'?{order_item:[],status:'PENDING',ordered_date:moment().format(dateFormat)}: { }
+  const initialValues =
+    checkpath === 'orders'
+      ? {
+          order_item: [],
+          status: 'PENDING',
+          ordered_date: moment().format(dateFormat),
+          total_quantity: 1,
+          shipping_charge: 0,
+        }
+      : {}
 
   const {
     fileList: fileListImages,
@@ -48,14 +75,16 @@ const FormA = ({ data, path, categories, units,users,products}) => {
         ]
       }
       setFileListImages(image)
-       console.log("image",data?.orders_items)
-     data?.orders_items? setValues({
-        ...data,
-        order_item:data?.orders_items||[]
-      })
-      :setValues({
-        ...data
-      })
+      console.log('image', data?.orders_items)
+      data?.orders_items
+        ? setValues({
+            ...data,
+            order_item: data?.orders_items?.map(item=>({product_id:item?.product_id,quantity:item?.quantity,price:item?.price})) || [],
+            deleted_item: data?.orders_items?.map(item=>item?.id)||[]
+          })
+        : setValues({
+            ...data,
+          })
       // console.log(initialValues)
       // setFileListImages(himg)
     }
@@ -76,7 +105,12 @@ const FormA = ({ data, path, categories, units,users,products}) => {
   const [success, setSuccess] = useState(false)
 
   const fetchSubmit = async () => {
-    const format = checkpath === 'products' || checkpath === 'doctors' || checkpath === 'users' || checkpath === 'orders'
+    const format =
+      checkpath === 'products' ||
+      checkpath === 'doctors' ||
+      checkpath === 'users' ||
+      checkpath === 'orders'
+      console.log("Values passed",values)
     const a = format ? await formAdd(path, values) : await JsonAdd(path, values)
     setSubmitting(false)
     if (a) {
@@ -90,6 +124,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
 
   const submitForm = () => {
     try {
+    
       console.log('will submitform', values)
       fetchSubmit()
     } catch (err) {
@@ -98,7 +133,14 @@ const FormA = ({ data, path, categories, units,users,products}) => {
   }
 
   console.log(initialValues)
-  const schema = {users:usersSchema,unit:unitSchema,category:categorySchema,orders:ordersSchema,doctors:doctorsSchema,products:productsSchema}
+  const schema = {
+    users: usersSchema,
+    unit: unitSchema,
+    category: categorySchema,
+    orders: ordersSchema,
+    doctors: doctorsSchema,
+    products: productsSchema,
+  }
   const {
     onChange,
     values,
@@ -112,8 +154,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     // touched,
     // setTouched,
   } = useFormValidation(initialValues, schema[checkpath], submitForm) // file as object {fileInputName:'icon', maxCount:1}
-  console.log("values",values, errors,initialValues)
-   
+  console.log('values', values, errors, initialValues)
+
   let formItems = [
     { heading: 'General' },
     {
@@ -128,7 +170,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
       label: 'Email',
       error: errors.email,
     },
-    
+
     {
       type: <Input type="password" name="password" value={values.password} type="password" />,
       key: 'password',
@@ -190,7 +232,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     //   label: 'Role',
     //   error: errors.isAdmin,
     // },
-      {
+    {
       label: 'Image',
       error: errors.image,
       key: 'image',
@@ -223,7 +265,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     },
     {
       type: (
-        <Radio.Group name="status"  buttonStyle="solid">
+        <Radio.Group name="status" buttonStyle="solid">
           <Radio.Button checked={values.status === 'active'} value="active">
             Active
           </Radio.Button>
@@ -244,8 +286,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     },
   ]
 
-  const productField=[ 
-     {
+  const productField = [
+    {
       type: (
         <Select
           mode="default"
@@ -256,8 +298,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           filterOption={false}
           // onSearch={fetchProducts}
           onChange={(e) => {
-            console.log("val",e)
-            setValues(a => ({
+            console.log('val', e)
+            setValues((a) => ({
               ...a,
               category_id: e,
             }))
@@ -288,8 +330,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           filterOption={false}
           // onSearch={fetchProducts}
           onChange={(e) => {
-            console.log("val",e)
-            setValues(a => ({
+            console.log('val', e)
+            setValues((a) => ({
               ...a,
               unit_id: e,
             }))
@@ -413,37 +455,43 @@ const FormA = ({ data, path, categories, units,users,products}) => {
         //     // style={{ width: '100%' }}
         //     // onPopupScroll={this.handlePopupScroll}
         //   >
-            
+
         //       <Select.Option key="%" value="%"> % </Select.Option>
         //       <Select.Option key="Rs" value="Rs"> Rs </Select.Option>
         //   </Select>
         //   }
-        //  type="number" 
+        //  type="number"
         //   value={values.discount_amount}
         //   // onChange={(val) => setValues((a) => ({ ...a, discount_amount: val }))}
         //   // min={0}
         // />
         <Input.Group compact>
-              <Input
-          style={{ width: '50%'}}
-          name="discount_amount" 
-           type="number" 
-          value={values.discount_amount}
-            />
-          <Select value={values.discount_type} 
-           placeholder="Select Discount Type"
-                    onChange={(e) => {
-              console.log("val",e)
-              setValues(a => ({
+          <Input
+            style={{ width: '50%' }}
+            name="discount_amount"
+            type="number"
+            value={values.discount_amount}
+          />
+          <Select
+            value={values.discount_type}
+            placeholder="Select Discount Type"
+            onChange={(e) => {
+              console.log('val', e)
+              setValues((a) => ({
                 ...a,
                 discount_type: e,
               }))
             }}
-            >
-               <Select.Option key="%" value="%"> % </Select.Option>
-            <Select.Option key="Rs" value="Rs"> Rs </Select.Option>
-            </Select>
-          
+          >
+            <Select.Option key="%" value="%">
+              {' '}
+              %{' '}
+            </Select.Option>
+            <Select.Option key="Rs" value="Rs">
+              {' '}
+              Rs{' '}
+            </Select.Option>
+          </Select>
         </Input.Group>
       ),
       key: 'discount_amount',
@@ -491,7 +539,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     },
   ]
 
-  const orderFields=[
+  const orderFields = [
     {
       type: (
         <Select
@@ -503,8 +551,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           filterOption={false}
           // onSearch={fetchProducts}
           onChange={(e) => {
-            console.log("val",e)
-            setValues(a => ({
+            console.log('val', e)
+            setValues((a) => ({
               ...a,
               user_id: e,
             }))
@@ -524,7 +572,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
       error: errors.user_id,
       // dependency: 'prescriptionNeeded',
     },
-      {
+    {
       type: (
         <Select
           mode="default"
@@ -535,8 +583,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           filterOption={false}
           // onSearch={fetchProducts}
           onChange={(e) => {
-            console.log("val",e)
-            setValues(a => ({
+            console.log('val', e)
+            setValues((a) => ({
               ...a,
               status: e,
             }))
@@ -562,6 +610,7 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           value={values.gross_amount}
           onChange={(val) => setValues((a) => ({ ...a, gross_amount: val }))}
           min={0}
+          disabled
         />
       ),
       key: 'gross_amount',
@@ -575,13 +624,14 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           value={values.discount}
           onChange={(val) => setValues((a) => ({ ...a, discount: val }))}
           min={0}
+          disabled
         />
       ),
       key: 'discount',
       label: 'Discount',
       error: errors.discount,
     },
-      
+
     {
       type: (
         <InputNumber
@@ -589,12 +639,13 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           value={values.shipping_charge}
           onChange={(val) => setValues((a) => ({ ...a, shipping_charge: val }))}
           min={0}
+          type="number"
         />
       ),
       key: 'shipping_charge',
       label: 'Shipping Charge',
       error: errors.shipping_charge,
-    }, 
+    },
     {
       type: (
         <InputNumber
@@ -630,8 +681,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           allowClear={false}
           // showToday
           value={moment(values.ordered_date)}
-          onChange={(e)=>{
-            setValues(prev => ({ ...prev, ordered_date: moment(e).format(dateFormat) }))
+          onChange={(e) => {
+            setValues((prev) => ({ ...prev, ordered_date: moment(e).format(dateFormat) }))
           }}
           // disabledDate={data ? null : disabledDate}
         />
@@ -692,13 +743,13 @@ const FormA = ({ data, path, categories, units,users,products}) => {
     //   error: errors.completed_date,
     // },
     {
-      label: 'Presciption',
+      label: 'Prescription',
       error: errors.image,
       key: 'image',
       name: 'image',
       type: (
         <>
-          <Upload listType="picture-card" name="image" {...propsImages}>
+          <Upload listType="picture" name="image" {...propsImages}>
             {/* <Button onBlur={(e) => onBlur(e, 'image')}> */}
             <Button>
               <Icon type="upload" /> Select File
@@ -712,10 +763,8 @@ const FormA = ({ data, path, categories, units,users,products}) => {
       key: 'comment',
       label: 'Comment',
       error: errors.comment,
-    }, 
-  
+    },
   ]
- 
 
   if (checkpath === 'category') {
     formItems = categoryformItems
@@ -736,21 +785,19 @@ const FormA = ({ data, path, categories, units,users,products}) => {
       ...formItems.filter((item) => item.key === 'phone' || item.key === 'image'),
       ...hospitalfied,
     ]
-  }
-  else if (checkpath === 'products') {
-    formItems = [...categoryformItems.filter((item) => item.key !== 'status'),
-    ...formItems.filter((item) => item.key === 'image'),
-    ...productField
+  } else if (checkpath === 'products') {
+    formItems = [
+      ...categoryformItems.filter((item) => item.key !== 'status'),
+      ...formItems.filter((item) => item.key === 'image'),
+      ...productField,
     ]
-  }
-  else if (checkpath === 'orders') {
-    formItems =orderFields
+  } else if (checkpath === 'orders') {
+    formItems = orderFields
   }
 
   if (success) return <Redirect to={`/${checkpath}`} />
 
   // console.log("discount Amount",values.qunatity*values.price+values.gross_amount-values.discount)
-
 
   return (
     <Form
@@ -778,10 +825,12 @@ const FormA = ({ data, path, categories, units,users,products}) => {
           </Form.Item>
         )
       })}
-     {
-checkpath==='orders' &&
-      <OrdersItem values={values} setValues={setValues} errors={errors} products={products}/>
-     }
+      {checkpath === 'orders' && (
+        <>
+          <OrdersItem values={values} setValues={setValues} errors={errors} products={products} />
+          <span style={{ color: 'red' }}>{errors.order_item}</span>
+        </>
+      )}
       <Form.Item {...tailFormItemLayout}>
         <Button disabled={isSubmitting} type="primary" htmlType="submit">
           Submit

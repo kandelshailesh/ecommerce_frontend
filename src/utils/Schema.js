@@ -97,18 +97,18 @@ export const productsSchema = Yup.object().shape({
 
 export const ordersSchema = Yup.object().shape({
   user_id: Yup.string().required('Required'),
-  gross_amount: Yup.string().required('required'),
-  discount: Yup.string().required('Required'),
+  // gross_amount: Yup.string().required('required'),
+  // discount: Yup.string().required('Required'),
   // shipping_charge: Yup.string().required('Required'),
-  total_amount: Yup.string().required('Required'),
-  total_quantity: Yup.string().required('Required'),
+  // total_amount: Yup.string().required('Required'),
+  // total_quantity: Yup.string().required('Required'),
   order_item:
   Yup.array().of(
     Yup.object().shape({
     product_id: Yup.string().required('Required'),
-    quantity: Yup.string().required('required'),
-    price: Yup.string().required('required')
-  })).nullable()
+    // quantity: Yup.string().required('required'),
+    // price: Yup.string().required('required')
+  })).nullable().required('required')
   // ordered_date: Yup.string().required('Required'),
   // shipping_date: Yup.string().required('Required'),
   // payment_date: Yup.string().required('Required'),

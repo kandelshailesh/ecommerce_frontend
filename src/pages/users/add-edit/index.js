@@ -35,7 +35,13 @@ const FormIndex = (props) => {
     method: 'POST',
   }
   let form = (
-    <Form path={obj} categories={categories?.DATA} units={units?.DATA} users={users?.data} products={products?.DATA} />
+    <Form
+      path={obj}
+      categories={categories?.DATA?.filter((item) => item?.status !== 'hold')}
+      units={units?.DATA}
+      users={users?.data?.filter((item) => item?.status !== 'hold')}
+      products={products?.DATA}
+    />
   )
   if (id) {
     form = (
@@ -54,10 +60,14 @@ const FormIndex = (props) => {
             return (
               <Form
                 data={Array.isArray(datas) ? datas[0] : datas}
-                path={url?.slice(0,-2)==='orders'?{ url:url.slice(0,-2), method: 'POST' }:{...obj,method:'PATCH'}}
-                categories={categories?.DATA?.(item=>item?.status!=='hold')}
+                path={
+                  url?.slice(0, -2) === 'orders'
+                    ? { url: url.slice(0, -2), method: 'POST' }
+                    : { ...obj, method: 'PATCH' }
+                }
+                categories={categories?.DATA?.filter((item) => item?.status !== 'hold')}
                 units={units?.DATA}
-                users={users?.data?.filter(item=>item?.status!=='hold')}
+                users={users?.data?.filter((item) => item?.status !== 'hold')}
                 products={products?.DATA}
               />
             )
