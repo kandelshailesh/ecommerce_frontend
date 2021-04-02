@@ -14,6 +14,16 @@ const initialState = {
   searchQuery: '',
   categories: [],
   selectedRowKeys: [],
+  menuItems: [
+    {
+      key: 'active',
+      title: 'Active',
+    },
+    {
+      key: 'hold',
+      title: 'Hold',
+    },
+  ],
 }
 
 function reducer(state, action) {
@@ -50,7 +60,7 @@ function reducer(state, action) {
     case 'updateClickedProdStatus': {
       // const { id, status } = action.payload
       if (state.statusClickedId) {
-        const index = findIndex(state.products, i => i.id === state.statusClickedId)
+        const index = findIndex(state.products, (i) => i.id === state.statusClickedId)
         if (index > -1) state.products[index].status = action.payload
         return { ...state, statusClickedId: null }
       }
@@ -59,7 +69,7 @@ function reducer(state, action) {
     }
     case 'deleteProduct': {
       const id = action.payload
-      const products = state.products.filter(i => i.id !== id)
+      const products = state.products.filter((i) => i.id !== id)
       return { ...state, products }
     }
     case 'setSearchers':
@@ -79,6 +89,11 @@ function reducer(state, action) {
       return { ...state, products: [] }
     case 'setCategories':
       return { ...state, categories: action.payload }
+    case 'changeMenuItems':
+      return { ...state, menuItems: action.payload }
+    case 'resetMenuItems':
+      return { ...state, menuItems: initialState.menuItems }
+
     case 'clearPagination':
       return {
         ...state,

@@ -37,7 +37,7 @@ class LoginLayout extends React.PureComponent {
           <div
             className={`${styles.layout} ${styles.light}`}
             style={{
-              backgroundImage: `url('resources/images/photos/${backgroundNumber}.jpeg')`,
+              backgroundImage: `url('resources/images/${backgroundNumber}.jpeg')`,
             }}
           >
             <div className={styles.header}>

@@ -1,34 +1,15 @@
 {
-  "name": "Infotanks",
+  "name": "Ecommerce",
   "version": "2.1.1",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "lint-staged": "lint-staged",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,scss,less}\"",
-    "eslint": "eslint --ext .js,jsx src",
     "tslint": "tslint \"src/**/*.{ts,tsx}\"",
     "stylelint": "stylelint \"src/**/*.{scss,less}\""
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint-staged"
-    }
-  },
   "proxy": "http://localhost:3060/",
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,scss,less}": [
-      "git add"
-    ],
-    "src/**/*.{js,jsx}": [
-      "eslint"
-    ],
-    "src/**/*.{scss,less}": [
-      "stylelint"
-    ]
-  },
   "dependencies": {
     "@rowno/sparkline": "^3.0.1",
     "@welldone-software/why-did-you-render": "^3.5.0",

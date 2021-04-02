@@ -4,9 +4,7 @@ import { notification } from 'antd'
 export default async function callApi(url, options = {}) {
   try {
     let apiUrl = url
-    console.log('in callApi')
-    // const baseURL = process.env.REACT_APP_BASE_URL
-    // console.log('baseURL', baseURL)
+    
     if (url.startsWith('/')) {
       // if relative url
       if (typeof options.headers === 'undefined') options = { ...options, headers: {} }
@@ -28,15 +26,13 @@ export default async function callApi(url, options = {}) {
       // throw new Error('Unauthorized!');
     }
     console.log('status 500')
-    // if (response.status === 500) {
-    //   console.log(response.status, 'status 500',response)
-    //   // notification.error({
-    //   //   message: 'Internal server error!',
-    //   //   description: 'Please try again later.',
-    //   // })
-    //   // return null
-    //   // return 
-    // }
+    if (response.status === 500) {
+      // notification.error({
+      //   message: 'Internal server error!',
+      //   description: 'Please try again later.',
+      // })
+      // return null
+    }
     if (response.success ||response.ok) {
       const a = await response.json().catch(() => {
         throw new Error('Server error!')

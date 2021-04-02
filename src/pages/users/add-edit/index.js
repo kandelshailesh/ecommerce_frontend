@@ -27,12 +27,15 @@ const FormIndex = (props) => {
   const [{ response: users }] = useFetching(`/api/backend/v1/users`)
   console.log('Categories Response', users)
 
+  const [{ response: products }] = useFetching(`/api/backend/v1/products`)
+  console.log('Categories Response', products)
+
   const obj = {
     url,
     method: 'POST',
   }
   let form = (
-    <Form path={obj} categories={categories?.DATA} units={units?.DATA} users={users?.data} />
+    <Form path={obj} categories={categories?.DATA} units={units?.DATA} users={users?.data} products={products?.DATA} />
   )
   if (id) {
     form = (
@@ -51,10 +54,11 @@ const FormIndex = (props) => {
             return (
               <Form
                 data={Array.isArray(datas) ? datas[0] : datas}
-                path={{ ...obj, method: 'PATCH' }}
-                categories={categories?.DATA}
+                path={url?.slice(0,-2)==='orders'?{ url:url.slice(0,-2), method: 'POST' }:{...obj,method:'PATCH'}}
+                categories={categories?.DATA?.(item=>item?.status!=='hold')}
                 units={units?.DATA}
-                users={users?.data}
+                users={users?.data?.filter(item=>item?.status!=='hold')}
+                products={products?.DATA}
               />
             )
           }

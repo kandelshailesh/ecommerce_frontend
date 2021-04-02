@@ -1,20 +1,13 @@
 /* eslint-disable */
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react'
 import { Input, Button, Select ,DatePicker } from 'antd'
 import isEmpty from 'lodash/isEmpty'
 import has from 'lodash/has'
-// import trim from 'lodash/trim'
 import find from 'lodash/find'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-// const buttonStyle = {
-//   display: 'flex',
-//   justifyContent: 'flex-end',
-//   marginRight: '2rem',
-// }
-
+ 
 const styles = {
   divider: { margin: '4px 0' },
   clearWrapper: { display: 'flex', flexWrap: 'nowrap', padding: 8 },
@@ -44,13 +37,6 @@ class SearchAndFilters extends Component {
     search: {},
     filters: {},
   }
-
-  
-  // componentDidUpdate(prevProps, prevState){
-  //   console.log('update')
-  //   console.log('props', prevProps, this.props)
-  //   console.log('state', prevState, this.state)
-  // }
 
   handleSubmitForm = (e) => {
     e.preventDefault()

@@ -5,14 +5,16 @@ import { unitSchema ,usersSchema,categorySchema,ordersSchema,productsSchema,doct
 import { formItemLayout, tailFormItemLayout, getBaseName } from 'utils'
 import { withRouter, Redirect } from 'react-router-dom'
 import useFormValidation from 'hooks/useFormValidation'
-import { add, JsonAdd } from 'services/addedit'
+import { formAdd, JsonAdd } from 'services'
 import { STRINGS, LINKS } from '_constants'
 import isEmpty from 'lodash/isEmpty'
 import useUpload from 'hooks/useUpload'
 // import {userformItems} from '../../Forms'
 import moment from 'moment'
-const dateFormat='DD-MM-YYYY'
-const FormA = ({ data, path, categories, units,users }) => {
+const dateFormat='l'
+import OrdersItem from '../OrderItem'
+
+const FormA = ({ data, path, categories, units,users,products}) => {
   console.log('path', path, path?.url.slice(0, -2),units)
   const { url } = path
   useEffect(() => {
@@ -21,10 +23,7 @@ const FormA = ({ data, path, categories, units,users }) => {
 
   const checkpath = url.includes('/') ? url.slice(0, -2) : url
 
-  const initialValues = {
-    // status: 'hold',
-    // type:'leadgen'
-  }
+  const initialValues =checkpath==='orders'?{order_item:[],status:'PENDING',ordered_date:moment().format(dateFormat)}: { }
 
   const {
     fileList: fileListImages,
@@ -49,12 +48,13 @@ const FormA = ({ data, path, categories, units,users }) => {
         ]
       }
       setFileListImages(image)
-      //  console.log("image",image ,data.image.slice(1,-1))
-      setValues({
+       console.log("image",data?.orders_items)
+     data?.orders_items? setValues({
         ...data,
-        // password:data?.password?'':null
-        //  image,
-        // deletedImage:data?.image
+        order_item:data?.orders_items||[]
+      })
+      :setValues({
+        ...data
       })
       // console.log(initialValues)
       // setFileListImages(himg)
@@ -76,8 +76,8 @@ const FormA = ({ data, path, categories, units,users }) => {
   const [success, setSuccess] = useState(false)
 
   const fetchSubmit = async () => {
-    const format = checkpath === 'products' || checkpath === 'doctors' || checkpath === 'users'
-    const a = format ? await add(path, values) : await JsonAdd(path, values)
+    const format = checkpath === 'products' || checkpath === 'doctors' || checkpath === 'users' || checkpath === 'orders'
+    const a = format ? await formAdd(path, values) : await JsonAdd(path, values)
     setSubmitting(false)
     if (a) {
       notification.success({
@@ -113,16 +113,7 @@ const FormA = ({ data, path, categories, units,users }) => {
     // setTouched,
   } = useFormValidation(initialValues, schema[checkpath], submitForm) // file as object {fileInputName:'icon', maxCount:1}
   console.log("values",values, errors,initialValues)
-  // Form data
-  // POST
-  // type:leadgen/bussiness_development
-  // fullName:str*
-  // email:str*
-  // Image:file
-  // Phone:str
-  // status:enum(active/hold),
-  // category:enum('leadgen','bussiness_development','admin')
-  
+   
   let formItems = [
     { heading: 'General' },
     {
@@ -590,6 +581,20 @@ const FormA = ({ data, path, categories, units,users }) => {
       label: 'Discount',
       error: errors.discount,
     },
+      
+    {
+      type: (
+        <InputNumber
+          name="shipping_charge"
+          value={values.shipping_charge}
+          onChange={(val) => setValues((a) => ({ ...a, shipping_charge: val }))}
+          min={0}
+        />
+      ),
+      key: 'shipping_charge',
+      label: 'Shipping Charge',
+      error: errors.shipping_charge,
+    }, 
     {
       type: (
         <InputNumber
@@ -597,6 +602,7 @@ const FormA = ({ data, path, categories, units,users }) => {
           value={values.total_amount}
           onChange={(val) => setValues((a) => ({ ...a, total_amount: val }))}
           min={0}
+          disabled
         />
       ),
       key: 'total_amount',
@@ -610,6 +616,7 @@ const FormA = ({ data, path, categories, units,users }) => {
           value={values.total_quantity}
           onChange={(val) => setValues((a) => ({ ...a, total_quantity: val }))}
           min={0}
+          disabled
         />
       ),
       key: 'total_quantity',
@@ -621,7 +628,7 @@ const FormA = ({ data, path, categories, units,users }) => {
         <DatePicker
           format={dateFormat}
           allowClear={false}
-          showToday
+          // showToday
           value={moment(values.ordered_date)}
           onChange={(e)=>{
             setValues(prev => ({ ...prev, ordered_date: moment(e).format(dateFormat) }))
@@ -633,14 +640,82 @@ const FormA = ({ data, path, categories, units,users }) => {
       label: 'Ordered Date',
       error: errors.ordered_date,
     },
+    // {
+    //   type: (
+    //     <DatePicker
+    //       format={dateFormat}
+    //       allowClear={false}
+    //       showToday
+    //       value={moment(values.payment_date)}
+    //       onChange={(e)=>{
+    //         setValues(prev => ({ ...prev, ordered_date: moment(e).format(dateFormat) }))
+    //       }}
+    //       // disabledDate={data ? null : disabledDate}
+    //     />
+    //   ),
+    //   key: 'payment_date',
+    //   label: 'Payment Date',
+    //   error: errors.payment_date,
+    // },
+    // {
+    //   type: (
+    //     <DatePicker
+    //       format={dateFormat}
+    //       allowClear={false}
+    //       showToday
+    //       value={moment(values.shipping_date)}
+    //       onChange={(e)=>{
+    //         setValues(prev => ({ ...prev, shipping_date: moment(e).format(dateFormat) }))
+    //       }}
+    //       // disabledDate={data ? null : disabledDate}
+    //     />
+    //   ),
+    //   key: 'shipping_date',
+    //   label: 'Shipping Date',
+    //   error: errors.shipping_date,
+    // },
+    // {
+    //   type: (
+    //     <DatePicker
+    //       format={dateFormat}
+    //       allowClear={false}
+    //       showToday
+    //       value={moment(values.completed_date)}
+    //       onChange={(e)=>{
+    //         setValues(prev => ({ ...prev, completed_date: moment(e).format(dateFormat) }))
+    //       }}
+    //       // disabledDate={data ? null : disabledDate}
+    //     />
+    //   ),
+    //   key: 'completed_date',
+    //   label: 'Completed Date',
+    //   error: errors.completed_date,
+    // },
+    {
+      label: 'Presciption',
+      error: errors.image,
+      key: 'image',
+      name: 'image',
+      type: (
+        <>
+          <Upload listType="picture-card" name="image" {...propsImages}>
+            {/* <Button onBlur={(e) => onBlur(e, 'image')}> */}
+            <Button>
+              <Icon type="upload" /> Select File
+            </Button>
+          </Upload>
+        </>
+      ),
+    },
     {
       type: <Input value={values.comment} name="comment" />,
       key: 'comment',
       label: 'Comment',
       error: errors.comment,
     }, 
-    
+  
   ]
+ 
 
   if (checkpath === 'category') {
     formItems = categoryformItems
@@ -674,6 +749,9 @@ const FormA = ({ data, path, categories, units,users }) => {
 
   if (success) return <Redirect to={`/${checkpath}`} />
 
+  // console.log("discount Amount",values.qunatity*values.price+values.gross_amount-values.discount)
+
+
   return (
     <Form
       onChange={onChange}
@@ -700,6 +778,10 @@ const FormA = ({ data, path, categories, units,users }) => {
           </Form.Item>
         )
       })}
+     {
+checkpath==='orders' &&
+      <OrdersItem values={values} setValues={setValues} errors={errors} products={products}/>
+     }
       <Form.Item {...tailFormItemLayout}>
         <Button disabled={isSubmitting} type="primary" htmlType="submit">
           Submit

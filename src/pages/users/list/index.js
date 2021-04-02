@@ -4,34 +4,42 @@ import { Button,Table, Icon, notification,Select, Dropdown, Popconfirm } from 'a
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import Menu from 'components/Menu'
-// import Table from 'components/Table'
 import AddNew from 'components/CustomComponents/AddNew'
 import useFetching from 'hooks/useFetching'
-// import { CATALOG_API_URL, LINKS } from '_constants'
 import isEmpty from 'lodash/isEmpty'
 import callApi from 'utils/callApi'
 import { STRINGS} from '_constants'
-// import Upload from 'components/Upload'
-// import { excelUploadSchema } from 'utils/Schema'
-// import Form from 'components/Form'
 import { connect } from 'react-redux'
-import { deleteOp  } from 'services/addedit'
+import { Delete  } from 'services'
 import { reducer, initialState } from './reducer'
-import { createColumns ,categoryColumns,userColumns,doctorColumns,productColumns } from '../../columns'
+import { createColumns ,categoryColumns,userColumns,doctorColumns,productColumns ,orderColumns} from '../../columns'
 import FilterProvider from 'components/RenderProps/FiltersProvider'
 
 const scrollStyle = { x: '100%' }
 
 const limits = [1, 10, 20, 50, 100]
 
-const menuItems = [
+
+const orderStatus = [
   {
-    key: 'active',
+    key: 'PENDING',
+    title: 'Pending',
+  },
+  {
+    key: 'ACTIVE',
     title: 'Active',
   },
   {
-    key: 'hold',
-    title: 'Hold',
+    key: 'CANCELLED',
+    title: 'Cancelled',
+  },
+  {
+    key: 'SHIPPING',
+    title: 'Shipping',
+  },
+  {
+    key: 'COMPLETED',
+    title: 'Completed',
   },
 ]
 
@@ -49,16 +57,41 @@ const Products = (props) => {
   const [{ response, loading, error }] = useFetching(
     `/api/backend/v1${path}`
   )
-
+useEffect(()=>{
+   if(path==='/orders'){
+    console.log("pathinsde",)  
+    dispatch({
+      type: 'changeMenuItems',
+      payload: orderStatus,
+    })
+   }
+   else{
+    console.log("else",)
+    dispatch({
+     type: 'resetMenuItems',
+   })
+   }
+},[path])
   const handleMenuClick = async (e) => {
     // refetch
     // console.log('clicked on', e.key, clickedId)
-
+    // const format = path === 'orders'
     try{
+      const Jsonoptions={
+        method:'PATCH',body:JSON.stringify({status:e.key}),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+      const formData=new FormData()
+      formData.append('status',e.key)
+      const FormOptions={
+        method:'POST',
+        body:formData
+      }
       const isUpdated = await callApi(
-        `/api/backend/v1${path}/${state.statusClickedId}`,
-
-        {method:'PATCH',body:{status:e.key}}
+         path==='/orders'? `/api/backend/v1${path}`:`/api/backend/v1${path}/${state.statusClickedId}`,
+         path==='/orders'?FormOptions:Jsonoptions
       )
       console.log("is",isUpdated)
       if (isUpdated?.success) {
@@ -79,12 +112,12 @@ const Products = (props) => {
     catch(err){
       notification.error({
         message: 'Error',
-        description: error,
+        description: err.message,
       })
     }
 
   }
-  const menu = <Menu items={menuItems} onClick={handleMenuClick} />
+  const menu = <Menu items={state.menuItems} onClick={handleMenuClick} />
 
   useEffect(() => {
     console.log("inside",response)
@@ -124,7 +157,7 @@ const Products = (props) => {
     // use refetch in usefetching
 
     try{
-      const isDeleted = await deleteOp(path,id)
+      const isDeleted = await Delete(path,id)
       if (isDeleted) {
         dispatch({
           type: 'deleteProduct',
@@ -193,12 +226,6 @@ const Products = (props) => {
           sortOrder: sorters.order,
         },
       })
-      // const sortObj = {
-      //   sort: {
-      //     [sortParams.field]: sortParams.order === 'descend' ? 'desc' : 'asc',
-      //   },
-      // }
-      // setSortQuery(qs.stringify(sortObj))
     } else {
       dispatch({
         type: 'clearSorters',
@@ -225,76 +252,6 @@ const Products = (props) => {
  
 
   let columns = [
-    // {
-    //   title: 'Full Name',
-    //   dataIndex: 'fullName',
-    //   key: 'fullName',
-    //   search:true,
-    //   width:100,
-    //   // sorter: (a, b) => a.name.localeCompare(b.name),
-    //   // sorter: true,
-    //   // multiple: 1,
-    //   render: (text, record) => (
-    //     <Link className="utils__link--underlined" to={`modules/add-edit/${record.id}`}>
-    //       {text}
-    //     </Link>
-    //   ),
-    // },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'email',
-    //   key: 'email',
-    //   // search: true,
-    //   width: 100,
-    //   // sorter: (a, b) => a.name.localeCompare(b.name),
-    //   // sorter: true,
-    //   // multiple: 1,
-    //   render: (text, record) => (
-    //     <span
-    //       style={{
-    //         textTransform: 'lowercase',
-    //       }}
-    //     >
-    //       {text}
-    //     </span>
-    //   ),
-    // },
-    // {
-    //   title: 'Phone',
-    //   dataIndex: 'phone',
-    //   key: 'phone',
-    //   width: 100,
-    //   // search: true,
-    //   // sorter: (a, b) => a.name.localeCompare(b.name),
-    //   // sorter: true,
-    //   // multiple: 1,
-    //   render: (text, record) => (text !== null ? <span>{text}</span> : <span>-</span>),
-    // },
-    // {
-    //   title: 'Category',
-    //   dataIndex: 'category',
-    //   key: 'category',
-    //   width:100,
-    //   render: (text, record) => <span>{text}</span>,
-    //   filters: [
-    //     {
-    //       label: 'Lead',
-    //       value: 'leadgen',
-    //       text: 'Lead',
-    //     },
-    //     {
-    //       label: 'Business Development',
-    //       value: 'bussiness_development',
-    //       text: 'Business Development',
-    //     },
-    //     // {
-    //     //   label: 'Admin',
-    //     //   value: 'admin',
-    //     //   text: 'Admin',
-    //     // },
-    //   ],
-    //   onFilter: (value, record) => record.category.indexOf(value) === 0,
-    // },
     {
       title: 'Status',
       dataIndex: 'status',
@@ -302,7 +259,10 @@ const Products = (props) => {
       width:100,
       render: (text, record) => {
         let badge = 'badge-success'
-        if (record.status === 'hold') badge = 'badge-danger'
+        if (record.status === 'hold'||record.status === 'CANCELLED') badge = 'badge-danger'
+        if (record.status === 'PENDING') badge = 'badge-primary'
+        if (record.status === 'SHIPPING') badge = 'badge-warning'
+        // if (record.status === 'COMPLETED') badge = 'badge-danger'
         return (
           <Dropdown
             overlay={menu}
@@ -317,18 +277,7 @@ const Products = (props) => {
           </Dropdown>
         )
       },
-      filters: [
-        {
-          label: 'Active',
-          value: 'active',
-          text: 'Active',
-        },
-        {
-          label: 'Hold',
-          value: 'hold',
-          text: 'Hold',
-        },
-      ],
+      filters:state.menuItems?.map((item)=>({ label:item.title,value:item.key,text:item.title})),
       onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
     {
@@ -371,6 +320,13 @@ const Products = (props) => {
     else if(path==='/products'){ 
       columns=[...productColumns,...columns.filter(item=>item.key!=='status')]
       console.log("usercolumns",userColumns)     
+    }
+    else if(path==='/orders'){ 
+      // columns=[...productColumns,...columns.filter(item=>item.key!=='status')]
+      columns=[...orderColumns,...columns]
+
+      console.log("usercolumns",userColumns)  
+      // menuItems=orderStatus   
     }
   }
   // },[columns])

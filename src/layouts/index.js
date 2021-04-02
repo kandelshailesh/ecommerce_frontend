@@ -8,7 +8,6 @@ import { ROLES } from '_constants'
 import PublicLayout from './Public'
 import LoginLayout from './Login'
 import MainLayout from './Main'
-// import Loader from 'components/LayoutComponents/Loader'
 
 const Layouts = {
   public: PublicLayout,
@@ -63,8 +62,7 @@ class IndexLayout extends React.PureComponent {
     const userRole = user.role
     const isUserLoading = user.loading
     const isLoginLayout = getLayout() === 'login'
-  
-    console.log("ISDIE",userRole,isLoginLayout,isUserAuthorized,user.role)
+   
     const BootstrappedLayout = () => {
       // show loader when user in check authorization process, not authorized yet and not on login pages
       if (isUserLoading && !isUserAuthorized && !isLoginLayout) {
@@ -79,10 +77,7 @@ class IndexLayout extends React.PureComponent {
         console.log('redirecting to alpha dash')
         return <Redirect to="/orders" />
       }
-      // if (isLoginLayout && isUserAuthorized && user.role === ROLES.admin) {
-      //   console.log('redirecting to seller dash')
-      //   return <Redirect to="/modules" />
-      // }
+
       // in other case render previously set layout
       return <Container>{children}</Container>
     }

@@ -8,12 +8,6 @@ export const SUPPORTED_FORMATS = [
   'image/png',
   // 'image/svg+xml',
 ]
-
-const EXCEL_FORMAT = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-const PDF_FORMAT = SUPPORTED_FORMATS.concat('application/pdf')
-
-const NUMBER_ERROR_MSG = 'Must be a number'
-
 const regExMobNo = /[0-9]\d{9}$/
 // ^[0-9()\\-\\.\\s]+$
 // const regExMobNo= /^\+(?:[0-9] ?){6,14}[0-9]$/
@@ -49,28 +43,17 @@ const checkFileType = (files, supportedFormats) => {
   }
   return valid
 }
-
-// type:leadgen/bussiness_development
-// fullName:str*
-// email:str*
-// Image:file
-// Phone:str
-// status:enum(active/hold),
-// category:enum('leadgen','bussiness_development','admin')
+ 
 export const usersSchema = Yup.object().shape({
   fullName: Yup.string().required('Required'),
   email: Yup.string().email('Email is not valid').required('Required'),
   phone: Yup.string().phone().min(10).max(10).required('required'),
   status: Yup.string().nullable().required('required'),
   gender: Yup.string().nullable().required('required'),
-  // type: Yup.string().nullable().required('required'),
-  // userTypeId: Yup.string().required('required'),
   image: Yup.array()
     .nullable()
     .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
-  // .test('emptyArray', 'A file is required', (a) => a && a.length !== 0)
-  // .required('Image(s) is required'),
-  // category: Yup.string().required('required'),
+ 
 })
 
 export const unitSchema = Yup.object().shape({
@@ -95,7 +78,7 @@ export const doctorsSchema = Yup.object().shape({
 
 export const productsSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
-  status: Yup.string().nullable().required('required'),
+  // status: Yup.string().nullable().required('required'),
   discount_amount: Yup.string().nullable().required('required'),
   image: Yup.array()
   .nullable()
@@ -116,96 +99,19 @@ export const ordersSchema = Yup.object().shape({
   user_id: Yup.string().required('Required'),
   gross_amount: Yup.string().required('required'),
   discount: Yup.string().required('Required'),
-  shipping_charge: Yup.string().required('Required'),
+  // shipping_charge: Yup.string().required('Required'),
   total_amount: Yup.string().required('Required'),
   total_quantity: Yup.string().required('Required'),
+  order_item:
+  Yup.array().of(
+    Yup.object().shape({
+    product_id: Yup.string().required('Required'),
+    quantity: Yup.string().required('required'),
+    price: Yup.string().required('required')
+  })).nullable()
   // ordered_date: Yup.string().required('Required'),
   // shipping_date: Yup.string().required('Required'),
   // payment_date: Yup.string().required('Required'),
   // comment: Yup.string().required('Required'),
 })
-
-export const excelUploadSchema = Yup.object().shape({
-  file: Yup.array()
-    .test('fileFormat', 'Unsupported Format. Required: xlsx', (files) =>
-      checkFileType(files, EXCEL_FORMAT),
-    )
-    .test('emptyArray', 'A file is required', (a) => a && a.length !== 0)
-    .required('A file is required'),
-})
-
-export const uploadDOCSchema = Yup.object().shape({
-  file: Yup.array()
-    .test('fileFormat', 'Unsupported Format. Required: pdf or image', (files) =>
-      checkFileType(files, PDF_FORMAT),
-    )
-    .test('emptyArray', 'A file is required', (a) => a && a.length !== 0)
-    .required('A file is required'),
-})
-
-export const uploadAdminDOCSchema = Yup.object().shape({
-  adminFiles: Yup.array()
-    .test('fileFormat', 'Unsupported Format. Required: pdf or image', (files) =>
-      checkFileType(files, PDF_FORMAT),
-    )
-    .test('emptyArray', 'A file is required', (a) => a && a.length !== 0)
-    .required('A file is required'),
-})
-
-export const prodImgsSchema = Yup.object().shape({
-  file: Yup.array()
-    .test('fileFormat', 'Unsupported Format. Required: jpg/ jpeg/ png', checkFileType)
-    .test('emptyArray', 'A file is required', (a) => a && a.length !== 0)
-    .required('A file is required'),
-})
-
-export const passwordSchema = Yup.object().shape({
-  password: Yup.string().required('Required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    .required('Required'),
-  // password: Yup.string()
-  //   .password(
-  //     'Password must be between 6 to 20 characters with at least one numeric digit, one uppercase and one lowercase letter',
-  //   )
-  //   .required('Required'),
-  // confirmPassword: Yup.string()
-  //   .oneOf([Yup.ref('password'), null], 'Passwords must match')
-  //   .required('Required'),
-})
-
-export const mailSettingsSchema = Yup.object().shape({
-  mailSecuritySetting: Yup.string().required('Required'),
-  smtpHost: Yup.string().required('Required'),
-  smtpUsername: Yup.string().required('Required'),
-  smtpPassword: Yup.string().required('Required'),
-  smtpPort: Yup.string().required('Required'),
-  smtpTimeout: Yup.number().typeError(NUMBER_ERROR_MSG).required('Required'),
-})
-
-export const generalSettingsSchema = Yup.object().shape({
-  projectName: Yup.string().required('Required'),
-  projectLabel: Yup.string().required('Required'),
-  shippingCost: Yup.number().typeError(NUMBER_ERROR_MSG),
-  shippingAmount: Yup.number().typeError(NUMBER_ERROR_MSG).required('Required'),
-  minCartValue: Yup.number().typeError(NUMBER_ERROR_MSG).required('Required'),
-  codEnabled: Yup.boolean().required('Required'),
-})
-
-export const footerSettingsSchema = Yup.object().shape({
-  projectName: Yup.string().required('Required'),
-  socialmedia: Yup.array(),
-  contacts: Yup.array(),
-  text: Yup.string().required('Required'),
-})
-
-export const profileSchema = Yup.object().shape({
-  // firstName: Yup.string().required('Required'),
-  // lastName: Yup.string().required('Required'),
-  email: Yup.string().required('Required'),
-  password: Yup.string().required('Required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords do not match')
-    .required('Required'),
-  phone: Yup.string().required('Required'),
-})
+ 

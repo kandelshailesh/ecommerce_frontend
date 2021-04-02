@@ -26,21 +26,6 @@ const routes = [
     exact: true,
     // authorize:false
   },
-  // {
-  //   path: '/user/admin/login',
-  //   component: loadable(() => import('pages/user/login')),
-  //   exact: true,
-  // },
-  // // Dashboards
-  // {
-  //   path: '/dashboard',
-  //   component: loadable(() => import('pages/dashboard/alpha')),
-  // },
-  // {
-  //   path: '/dashboard/seller',
-  //   component: loadable(() => import('pages/dashboard/seller')),
-  // },
-  // modules
   {
     path: '/users',
     component: loadable(() => import('pages/users/list')),
@@ -159,13 +144,6 @@ const routes = [
     component: loadable(() => import('pages/users/add-edit')),
     exact: true,
     // authorize:true
-  },
-
-  // AntDesign
-  {
-    path: '/antd',
-    component: loadable(() => import('pages/antd')),
-    exact: true,
   },
 ]
 
