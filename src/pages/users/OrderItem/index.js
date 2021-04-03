@@ -25,7 +25,7 @@ const FormIndex = (props) => {
   const onClickAddAttr = () => {
     setValues((a) => {
       const newData = {
-        product_id: '',
+        product_id: null,
         quantity: 1,
         price: 0,
       }

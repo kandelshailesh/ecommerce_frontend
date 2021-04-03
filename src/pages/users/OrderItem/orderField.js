@@ -22,7 +22,7 @@ const OrderItem = ({ values, setValues, index, i, errors, products }) => {
                     product_old_price:ditem.old_price,
                     quantity:Number(values.quantity),
                     gAmount:Number(item?.quantity*item?.price),
-                    discount:ditem?.discountable?(ditem?.discount_type=="%"?Number(item?.quantity*item.price*ditem.discount_amount/100):Number(ditem.discount_amount)):0
+                    discount:ditem?.discountable?(ditem?.discount_type=="%"?Number(item?.quantity*item.price*ditem.discount_amount/100):Number(item?.quantity*ditem.discount_amount)):0
                     // discount:ditem.discount_type==="%"?ditem.old_price*ditem.discount_amount/100:ditem.discount_amount
                   }
                 
@@ -100,13 +100,7 @@ const OrderItem = ({ values, setValues, index, i, errors, products }) => {
       ),
       key: 'product_id',
       label: 'Product',
-      error: errors.order_item
-      ? errors.order_item[index].product_id
-        ? errors.order_item[index].product_id
-          ? errors.order_item[index].product_id
-          : ''
-        : '' || ''
-      : '',
+      error: errors.product_id
     },
     {
       type: (
@@ -207,6 +201,7 @@ const OrderItem = ({ values, setValues, index, i, errors, products }) => {
               <strong>{item.heading}</strong>
             </h4>
           )
+          // console.log("error inside",item.error)
         return (
           <Form.Item
             key={item.key}
