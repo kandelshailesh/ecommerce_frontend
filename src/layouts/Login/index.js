@@ -30,7 +30,7 @@ class LoginLayout extends React.PureComponent {
             </div>
             <div className={styles.content}>{children}</div>
             <div className={`${styles.footer} text-center`}>
-              <p>&copy; 2021 Seenam. All rights reserved.</p>
+              <p>&copy; 2021 Expedite Meds. All rights reserved.</p>
             </div>
           </div>
         </Layout.Content>

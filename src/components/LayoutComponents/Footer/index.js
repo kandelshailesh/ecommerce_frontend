@@ -62,7 +62,7 @@ import styles from './style.module.scss'
 const Footer = () => (
   <div className={styles.footer}>
     <div className={styles.inner}>
-      <p className="text-center">&copy; 2021 Seenam. All rights reserved.</p>
+      <p className="text-center">&copy; 2021 Expedite Meds. All rights reserved.</p>
     </div>
   </div>
 )
