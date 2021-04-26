@@ -52,7 +52,7 @@ export async function getLeftMenuData() {
     {
       divider: true,
     },
- 
+
     {
       title: 'Doctors',
       key: 'doctors',
@@ -74,7 +74,7 @@ export async function getLeftMenuData() {
       divider: true,
     },
     {
-      title: 'Subscribtion',
+      title: 'Subscribed Items',
       key: 'subscriber',
       pro: false,
       icon: 'icmn icmn-bell',
@@ -83,7 +83,6 @@ export async function getLeftMenuData() {
     {
       divider: true,
     },
-    
   ]
 }
 export async function getTopMenuData() {
@@ -117,6 +116,5 @@ export async function getLeftMenuDataUser() {
       target: '_blank',
       icon: 'icmn icmn-books',
     },
-    
   ]
 }

@@ -10,6 +10,7 @@ import {
   notification,
   Upload,
   Icon,
+  message,
   DatePicker,
 } from 'antd'
 import {
@@ -32,7 +33,7 @@ import moment from 'moment'
 const dateFormat = 'l'
 import OrdersItem from '../OrderItem'
 
-const widthStyle={ width: '100%' }
+const widthStyle = { width: '100%' }
 const FormA = ({ data, path, categories, units, users, products }) => {
   console.log('path', path, path?.url.slice(0, -2), units)
   const { url } = path
@@ -80,8 +81,13 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       data?.orders_items
         ? setValues({
             ...data,
-            order_item: data?.orders_items?.map(item=>({product_id:item?.product_id,quantity:item?.quantity,price:item?.price})) || [],
-            deleted_item: data?.orders_items?.map(item=>item?.id)||[]
+            order_item:
+              data?.orders_items?.map((item) => ({
+                product_id: item?.product_id,
+                quantity: item?.quantity,
+                price: item?.price,
+              })) || [],
+            deleted_item: data?.orders_items?.map((item) => item?.id) || [],
           })
         : setValues({
             ...data,
@@ -111,7 +117,7 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       checkpath === 'doctors' ||
       checkpath === 'users' ||
       checkpath === 'orders'
-      console.log("Values passed",values)
+    console.log('Values passed', values)
     const a = format ? await formAdd(path, values) : await JsonAdd(path, values)
     setSubmitting(false)
     if (a) {
@@ -125,7 +131,6 @@ const FormA = ({ data, path, categories, units, users, products }) => {
 
   const submitForm = () => {
     try {
-    
       console.log('will submitform', values)
       fetchSubmit()
     } catch (err) {
@@ -539,7 +544,7 @@ const FormA = ({ data, path, categories, units, users, products }) => {
     },
   ]
 
-  const subscribtionStatus= [
+  const subscribtionStatus = [
     {
       key: 'active',
       title: 'Active',
@@ -585,14 +590,22 @@ const FormA = ({ data, path, categories, units, users, products }) => {
           value={values.status}
           placeholder="Select Status"
           filterOption={false}
-          onChange={(e) => {
-            setValues((a) => ({
-              ...a,
-              status: e,
-            }))
+          onChange={async (e) => {
+            if (values.id) {
+              await JsonAdd({ url: `orders/${values.id}`, method: 'PATCH' }, { status: e })
+              message.success('Order status changed successfully')
+              setValues((a) => ({
+                ...a,
+                status: e,
+              }))
+            } else {
+              setValues((a) => ({
+                ...a,
+                status: e,
+              }))
+            }
           }}
           style={{ width: '100%' }}
- 
         >
           {orderStatus?.map((d) => (
             <Select.Option key={d.key} value={d.key}>
@@ -661,20 +674,6 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       key: 'total_amount',
       label: 'Total Amount',
       error: errors.total_amount,
-    },
-    {
-      type: (
-        <InputNumber
-          name="total_quantity"
-          value={values.total_quantity}
-          onChange={(val) => setValues((a) => ({ ...a, total_quantity: val }))}
-          min={0}
-          disabled
-        />
-      ),
-      key: 'total_quantity',
-      label: 'Total Quantity',
-      error: errors.total_quantity,
     },
     {
       type: (
@@ -767,24 +766,24 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       error: errors.comment,
     },
   ]
-const subscriberFields=[
-  {
-    type: (
-      <Radio.Group name="status" buttonStyle="solid">
-        {subscribtionStatus?.map((d) => (
-          <Radio.Button checked={values.status === d.key} value={d.key}>
-           {d.title}
-          </Radio.Button>
-                  ))}
-        </Radio.Group>
-    ),
-    key: 'status',
-    label: 'Status',
-    error: errors.status,
-  },
-  {
+  const subscriberFields = [
+    {
       type: (
-       <Select
+        <Radio.Group name="status" buttonStyle="solid">
+          {subscribtionStatus?.map((d) => (
+            <Radio.Button checked={values.status === d.key} value={d.key}>
+              {d.title}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      ),
+      key: 'status',
+      label: 'Status',
+      error: errors.status,
+    },
+    {
+      type: (
+        <Select
           name="product_id"
           value={values.product_id}
           // showSearch
@@ -792,7 +791,6 @@ const subscriberFields=[
           placeholder="Select Product"
           // optionFilterProp="children"
           onChange={(e) => {
- 
             setValues((a) => ({
               ...a,
               product_id: e,
@@ -802,17 +800,16 @@ const subscriberFields=[
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-         {products?.map((d) => (
+          {products?.map((d) => (
             <Select.Option key={d.id} value={d.id}>
               {d?.name}
             </Select.Option>
           ))}
         </Select>
-      
       ),
       key: 'product_id',
       label: 'Product',
-      error: errors.product_id
+      error: errors.product_id,
     },
     {
       type: (
@@ -825,7 +822,6 @@ const subscriberFields=[
               ...a,
               quantity: e,
             }))
- 
           }}
           min={1}
         />
@@ -840,7 +836,7 @@ const subscriberFields=[
           format={dateFormat}
           allowClear={false}
           // showToday
-          value={values?.subscribed_date? moment(values.subscribed_date):''}
+          value={values?.subscribed_date ? moment(values.subscribed_date) : ''}
           onChange={(e) => {
             setValues((prev) => ({ ...prev, subscribed_date: moment(e).format(dateFormat) }))
           }}
@@ -849,14 +845,14 @@ const subscriberFields=[
       key: 'subscribed_date',
       label: 'Subscribed Date',
       error: errors.subscribed_date,
-    }, 
+    },
     {
       type: (
         <DatePicker
           format={dateFormat}
           allowClear={false}
           // showToday
-          value={values?.last_send_date?moment(values.last_send_date):''}
+          value={values?.last_send_date ? moment(values.last_send_date) : ''}
           onChange={(e) => {
             setValues((prev) => ({ ...prev, last_send_date: moment(e).format(dateFormat) }))
           }}
@@ -866,8 +862,7 @@ const subscriberFields=[
       label: 'Last Send Date',
       error: errors.last_send_date,
     },
- 
-]
+  ]
   if (checkpath == 'category') {
     formItems = categoryformItems
   } else if (checkpath == 'unit') {
@@ -881,11 +876,18 @@ const subscriberFields=[
         error: errors.hospital,
         // dependency: 'prescriptionNeeded',
       },
+      {
+        type: <Input value={values.post} name="post" />,
+        key: 'post',
+        label: 'Post',
+        error: errors.post,
+        // dependency: 'prescriptionNeeded',
+      },
     ]
     formItems = [
       ...categoryformItems.filter((item) => item.key !== 'description'),
-      ...formItems.filter((item) => item.key === 'phone' || item.key === 'image'),
       ...hospitalfied,
+      ...formItems.filter((item) => item.key === 'phone' || item.key === 'image'),
     ]
   } else if (checkpath == 'products') {
     formItems = [
@@ -895,9 +897,8 @@ const subscriberFields=[
     ]
   } else if (checkpath === 'orders') {
     formItems = orderFields
-  }
-  else if (checkpath === 'subscriber') {
-    formItems = [...orderFields.filter(item=>item.key=='user_id'),...subscriberFields]
+  } else if (checkpath === 'subscriber') {
+    formItems = [...orderFields.filter((item) => item.key == 'user_id'), ...subscriberFields]
   }
 
   if (success) return <Redirect to={`/${checkpath}`} />

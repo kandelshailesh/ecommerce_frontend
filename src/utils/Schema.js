@@ -43,7 +43,7 @@ const checkFileType = (files, supportedFormats) => {
   }
   return valid
 }
- 
+
 export const usersSchema = Yup.object().shape({
   fullName: Yup.string().required('Required'),
   email: Yup.string().email('Email is not valid').required('Required'),
@@ -53,7 +53,6 @@ export const usersSchema = Yup.object().shape({
   image: Yup.array()
     .nullable()
     .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
- 
 })
 
 export const unitSchema = Yup.object().shape({
@@ -70,19 +69,19 @@ export const doctorsSchema = Yup.object().shape({
   status: Yup.string().nullable().required('required'),
   phone: Yup.string().phone().min(10).max(10).required('required'),
   image: Yup.array()
-  .nullable()
-  .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
+    .nullable()
+    .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
   hospital: Yup.string().required('Required'),
+  post: Yup.string().required('required'),
 })
-
 
 export const productsSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
   // status: Yup.string().nullable().required('required'),
   discount_amount: Yup.string().nullable().required('required'),
   image: Yup.array()
-  .nullable()
-  .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
+    .nullable()
+    .test('fileFormat', 'Unsupported Format. Required:(.jpg,.png,.jpeg)', checkFileType),
   category_id: Yup.string().required('Required'),
   unit_id: Yup.string().required('Required'),
   unit_price: Yup.string().required('Required'),
@@ -102,16 +101,18 @@ export const ordersSchema = Yup.object().shape({
   // shipping_charge: Yup.string().required('Required'),
   // total_amount: Yup.string().required('Required'),
   // total_quantity: Yup.string().required('Required'),
-  order_item:
-  Yup.array().of(
-    Yup.object().shape({
-    product_id: Yup.string().required('Required'),
-    // quantity: Yup.string().required('required'),
-    // price: Yup.string().required('required')
-  })).nullable().required('required')
+  order_item: Yup.array()
+    .of(
+      Yup.object().shape({
+        product_id: Yup.string().required('Required'),
+        // quantity: Yup.string().required('required'),
+        // price: Yup.string().required('required')
+      }),
+    )
+    .nullable()
+    .required('required'),
   // ordered_date: Yup.string().required('Required'),
   // shipping_date: Yup.string().required('Required'),
   // payment_date: Yup.string().required('Required'),
   // comment: Yup.string().required('Required'),
 })
- 
