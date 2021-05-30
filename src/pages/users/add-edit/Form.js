@@ -895,7 +895,7 @@ const FormA = ({ data, path, categories, units, users, products }) => {
       ...formItems.filter((item) => item.key === 'image'),
       ...productField,
     ]
-  } else if (checkpath === 'orders') {
+  } else if (checkpath === 'orders' || checkpath === 'orders/') {
     formItems = orderFields
   } else if (checkpath === 'subscriber') {
     formItems = [...orderFields.filter((item) => item.key == 'user_id'), ...subscriberFields]
@@ -931,7 +931,7 @@ const FormA = ({ data, path, categories, units, users, products }) => {
           </Form.Item>
         )
       })}
-      {checkpath === 'orders' && (
+      {checkpath === 'orders' || checkpath==='orders/' && (
         <>
           <OrdersItem values={values} setValues={setValues} errors={errors} products={products} />
           <span style={{ color: 'red' }}>{errors.order_item}</span>

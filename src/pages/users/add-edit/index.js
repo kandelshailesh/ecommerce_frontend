@@ -15,7 +15,7 @@ const FormIndex = (props) => {
   const { params } = match
   const { id } = params
   const url = match.url?.replace('/', '').replace('/add-edit', '')
-  console.log('url', url, url.slice(0, -2))
+  console.log('url', url, url.slice(0, -3))
   //  console.log("props",props,match.url.replace('/add-edit','').replace("/"))
 
   const [{ response: categories }] = useFetching(`/api/backend/v1/category?status=active`)
@@ -43,6 +43,8 @@ const FormIndex = (props) => {
       products={products?.DATA}
     />
   )
+
+  // const sliceUrl = url.slice(0, -2) === 'orders/' ? 'admin_orders' : url.slice(0, -2)
   if (id) {
     form = (
       <Query
